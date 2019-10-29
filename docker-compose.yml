@@ -122,3 +122,30 @@ services:
       - db
     ports:
       - '1337:1337'
+
+  #SonarQube
+  SonarQube:
+    image: sonarqube
+    ports:
+      - '9000:9000'
+    networks:
+      - kong-net
+
+  #Jenkins
+  Jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - '8080:8080'
+      - '50000:50000'
+    networks:
+      - kong-net
+
+  #WebhookRelay
+  Relay:
+    image: webhookrelay/webhookrelayd
+    environment:
+      - KEY=4ec972c0-65b4-4f92-af91-d19c57b6ed82
+      - SECRET=IIe06wMZjc4W
+      - BUCKET=SurveyDonkey-Bucket
+    networks:
+      - kong-net
