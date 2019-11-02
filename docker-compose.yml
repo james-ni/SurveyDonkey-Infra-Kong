@@ -132,8 +132,8 @@ services:
       - kong-net
 
   #Jenkins
-  Jenkins:
-    image: jenkins/jenkins:lts
+  jenkins:
+    build: .
     ports:
       - '8080:8080'
       - '50000:50000'
