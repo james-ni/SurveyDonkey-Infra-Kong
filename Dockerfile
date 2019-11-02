@@ -2,6 +2,6 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-RUN apt-get update && apt-get install -y git make
+RUN apt-get update && apt-get install -y git make zip
 
 USER jenkins
