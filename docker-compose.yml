@@ -1,10 +1,10 @@
 version: '2.1'
 
 volumes:
-  kong_data: {}
+  surveydonkey_data: {}
 
 networks:
-  kong-net:
+  surveydonkey-net:
 services:
   kong-migrations:
     image: '${KONG_DOCKER_TAG:-kong:latest}'
@@ -21,7 +21,7 @@ services:
     links:
       - db:db
     networks:
-      - kong-net
+      - surveydonkey-net
     restart: on-failure
   kong-migrations-up:
     image: '${KONG_DOCKER_TAG:-kong:latest}'
@@ -38,7 +38,7 @@ services:
     links:
       - db:db
     networks:
-      - kong-net
+      - surveydonkey-net
     restart: on-failure
   kong:
     image: '${KONG_DOCKER_TAG:-kong:latest}'
@@ -59,7 +59,7 @@ services:
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
     networks:
-      - kong-net
+      - surveydonkey-net
     ports:
       - '8000:8000/tcp'
       - '8001:8001/tcp'
@@ -86,18 +86,18 @@ services:
     stdin_open: true
     tty: true
     networks:
-      - kong-net
+      - surveydonkey-net
     volumes:
-      - kong_data:/var/lib/postgresql/data
+      - surveydonkey_data:/var/lib/postgresql/data
 
   #######################################
   # Konga database prepare
   #######################################
   konga-prepare:
-    image: pantsel/konga:next
+    image: pantsel/konga:0.14.7
     command: '-c prepare -a postgres -u postgresql://kong:kong@db:5432/konga_db'
     networks:
-      - kong-net
+      - surveydonkey-net
     restart: on-failure
     depends_on:
       - db
@@ -106,10 +106,10 @@ services:
   # Konga: Kong GUI
   #######################################
   konga:
-    image: pantsel/konga:next
+    image: pantsel/konga:0.14.7
     restart: always
     networks:
-      - kong-net
+      - surveydonkey-net
     environment:
       DB_ADAPTER: postgres
       DB_HOST: db
@@ -123,14 +123,6 @@ services:
     ports:
       - '1337:1337'
 
-  #SonarQube
-  SonarQube:
-    image: sonarqube
-    ports:
-      - '9000:9000'
-    networks:
-      - kong-net
-
   #Jenkins
   jenkins:
     build: .
@@ -138,14 +130,13 @@ services:
       - '8080:8080'
       - '50000:50000'
     networks:
-      - kong-net
+      - surveydonkey-net
 
   #WebhookRelay
-  Relay:
+  relay:
     image: webhookrelay/webhookrelayd
     environment:
       - KEY=4ec972c0-65b4-4f92-af91-d19c57b6ed82
       - SECRET=IIe06wMZjc4W
-      - BUCKET=SurveyDonkey-Bucket
     networks:
-      - kong-net
+      - surveydonkey-net
