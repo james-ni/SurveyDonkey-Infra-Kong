@@ -146,6 +146,5 @@ services:
     environment:
       - KEY=4ec972c0-65b4-4f92-af91-d19c57b6ed82
       - SECRET=IIe06wMZjc4W
-      - BUCKET=SurveyDonkey-Bucket
     networks:
       - kong-net
