@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Description: the type of environment
+    AllowedValues:
+      - dev
+      - int
+      - staging
+      - prod
+  AppName:
+    Type: String
+  ServiceName:
+    Type: String
+  AppVersion:
+    Type: String
+    Default: v1
+  CodeBucket:
+    Type: String
+  CodePrefix:
+    Type: String
+  FlywayVersion:
+    Type: String
+
+Resources:
+  FlywayLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      CompatibleRuntimes: [python3.6]
+      LayerName: !Sub '${AppName}-${ServiceName}-flyway-${FlywayVersion}-${Environment}-${AppVersion}'
+      Content:
+        S3Bucket: !Sub '${CodeBucket}'
+        S3Key: !Sub '${CodePrefix}/flyway.zip'
+
+Outputs:
+  FlywayLayer:
+    Description: The ID of Flyway layer
+    Value: !Ref FlywayLayer
+    Export:
+      Name: !Sub '${AWS::StackName}'
