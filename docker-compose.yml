@@ -2,6 +2,7 @@ version: '2.1'
 
 volumes:
   surveydonkey_data: {}
+  jenkins_home:
 
 networks:
   surveydonkey-net:
@@ -133,6 +134,9 @@ services:
       - '50000:50000'
     networks:
       - surveydonkey-net
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
 
   #WebhookRelay
   relay:
